@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="com.pedro.vlctestapp.MainActivity"
+    >
+
+  <SurfaceView
+      android:id="@+id/surfaceView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/image1"/>
+
+  <EditText
+      android:id="@+id/et_endpoint"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_centerHorizontal="true"
+      android:layout_margin="20dp"
+      android:hint="@string/yourendpoint"
+      android:text="192.168.1.100"
+      android:textColor="@color/white"
+      android:textColorHint="@color/white"
+      android:inputType="textUri"
+      android:gravity="center"
+      />
+
+  <Button
+      android:id="@+id/b_start_stop"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/start_player"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_margin="20dp"
+      />
+
+
+  <Button
+      android:id="@+id/b_PushToTalk"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/Push_to_talk"
+      android:layout_alignParentBottom="true"
+      android:layout_centerInParent="true"
+      android:layout_margin="20dp"
+      />
+
+
+  <Button
+      android:id="@+id/getpicture"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_margin="20dp"
+      android:onClick="getpicture()"
+      android:text="getPicture" />
+
+</RelativeLayout>
