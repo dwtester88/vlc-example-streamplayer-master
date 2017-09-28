@@ -1,7 +1,12 @@
 package com.pedro.vlctestapp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 import java.io.IOException;
@@ -145,6 +150,19 @@ public class ServiceListner  extends Service {
                     String ServerrIP = data.substring(4);
                     if(action.equals("ADD:")) {
                         Log.i(UDP_BROADCAST, "Packet received: " + data);
+
+                        /*Notification.Builder mBuilder = new Notification.Builder(getApplicationContext())
+                                .setContentTitle("Notification Alert, Click Me!")
+                                .setContentText("Hi, This is Android Notification Detail!");
+
+
+                        NotificationManager manager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+                        manager.notify(0, mBuilder.build());*/
+
+                        //git commit: notification beep added notification ring when get udp connection
+                        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                        r.play();
 
                         //Thread.sleep(5000);
                         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
