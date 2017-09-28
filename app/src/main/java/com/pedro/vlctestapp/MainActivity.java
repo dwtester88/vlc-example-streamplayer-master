@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.StaticLayout;
 import android.util.Log;
@@ -45,7 +48,7 @@ import java.net.UnknownHostException;
 public class MainActivity extends AppCompatActivity implements VlcListener, View.OnClickListener {
 
   private VlcVideoLibrary vlcVideoLibrary;
-  private Button bStartStop,bgetpiture,btnpush;
+  private Button bStartStop,bgetpiture,btnpush,btnvideo10;
   private EditText etEndpoint;
  // public ImageView image;
   SurfaceView surfaceView;
@@ -58,13 +61,17 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
   private String displayName, Serverip;
   private boolean STARTED = false;
   private boolean IN_CALL = false;
-  private boolean LISTEN = false;
+
+    private boolean LISTEN = false;
+    private boolean video10=false;
   EditText IPAddress;
   MakeCall makeCall = new MakeCall();
   ServiceListner serviceListner = new ServiceListner();
 
 
   File file;
+    long start, end; // used for 10 sec video
+
 
   static final int SocketServerPORT = 1234;
     static ImageView image=null;
@@ -89,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
 
     }
 
+
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
@@ -103,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
     bStartStop = (Button) findViewById(R.id.b_start_stop);
     bgetpiture =(Button) findViewById(R.id.getpicture);
     btnpush = (Button) findViewById(R.id.b_PushToTalk);
+    btnvideo10 = (Button) findViewById(R.id.video10sec);
+
     bStartStop.setOnClickListener(this);
     etEndpoint = (EditText) findViewById(R.id.et_endpoint);
     etEndpoint.setText(serverip);
@@ -211,6 +222,32 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
       }
     });
 
+        //Git Commit: 10sec video button built for 10sec video stream from server
+      btnvideo10.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              if (!vlcVideoLibrary.isPlaying()) {
+                  Log.d(LOG_TAG,"turning video10 click first ");
+                  vlcVideoLibrary.stop();
+                  video10 = true;
+                  surfaceView.setVisibility(View.VISIBLE);
+                  image.setVisibility(View.INVISIBLE);
+                  vlcVideoLibrary.play("rtsp://"+etEndpoint.getText().toString()+":8555");
+                  bStartStop.setText(getString(R.string.stop_player));
+                  etEndpoint.setVisibility(View.INVISIBLE);
+              } else {
+                  Log.d(LOG_TAG,"Turning video10 off");
+                  video10 = false;
+                  surfaceView.setVisibility(View.INVISIBLE);
+                  image.setVisibility(View.VISIBLE);
+                  image.setImageURI(null);
+                  vlcVideoLibrary.stop();
+                  bStartStop.setText(getString(R.string.start_player));
+                  etEndpoint.setVisibility(View.VISIBLE);
+              }
+          }
+      });
+
    /* bgetpiture.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
 
@@ -276,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
       }
     });*/
   }
+
+
 
   private class ClientRxThread extends Thread {
     String dstAddress,dstmsg;
@@ -352,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
             image.setImageURI(uri);
             image.requestFocus();
             image.setVisibility(View.VISIBLE);
+              image.setRotation(-90);
           }});
 
       } catch (IOException e) {
@@ -430,6 +470,19 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
   @Override
   public void onComplete() {
     Toast.makeText(this, "Playing", Toast.LENGTH_SHORT).show();
+
+      ////Git Commet: 10sec video if condition true then button is click again automatically adter 15sec
+      if(video10) {
+          start=System.currentTimeMillis();
+          end=start+15000;
+          Log.d(LOG_TAG, "video10 if true");
+          while(System.currentTimeMillis()<end) {
+
+          }
+          btnvideo10.performClick();
+          Log.d(LOG_TAG, "video10 click secondtime ");
+
+      }
   }
 
   @Override
@@ -442,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
 
   @Override
   public void onClick(View view) {
+      video10 = false;
       if (!vlcVideoLibrary.isPlaying()) {
       vlcVideoLibrary.stop();
       surfaceView.setVisibility(View.VISIBLE);
@@ -458,6 +512,8 @@ public class MainActivity extends AppCompatActivity implements VlcListener, View
       etEndpoint.setVisibility(View.VISIBLE);
     }
   }
+
+
 
   @Override
   protected void onDestroy() {
